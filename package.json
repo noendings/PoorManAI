@@ -1,0 +1,33 @@
+{
+  "name": "ai-handover",
+  "version": "0.1.0",
+  "description": "AI 工作交接套装 - 一键生成交接文档，让下一个 AI 无缝接手",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "skill",
+    "ai-handover",
+    "context-management",
+    "work-transfer",
+    "llm-tools",
+    "productivity"
+  ],
+  "author": "noendings",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noendings/ai-handover.git"
+  },
+  "bugs": {
+    "url": "https://github.com/noendings/ai-handover/issues"
+  },
+  "homepage": "https://github.com/noendings/ai-handover#readme",
+  "files": [
+    "skills/ai-handover/SKILL.md",
+    "README.md"
+  ],
+  "claudeCodeSkill": {
+    "skillPath": "skills/ai-handover",
+    "skillName": "ai-handover"
+  }
+}
