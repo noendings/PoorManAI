@@ -4,6 +4,7 @@
 #   target_dir: custom skill directory (default ~/.claude/skills/)
 #
 # Reads claudeCodeSkill config from package.json and installs the skill.
+# Also creates gzjj and xrtk command aliases.
 
 set -euo pipefail
 
@@ -65,26 +66,79 @@ fi
 
 mkdir -p "$TARGET_BASE"
 
+# Install main skill
 if [ -d "$TARGET_DIR" ]; then
     warn "Target already exists: $TARGET_DIR"
     printf "Overwrite? [y/N] "
     read -r answer
     case "$answer" in
         [Yy]*) rm -rf "$TARGET_DIR"; info "Removed old version" ;;
-        *) info "Installation cancelled"; exit 0 ;;
+        *) info "Installation of $SKILL_NAME skipped"; exit 0 ;;
     esac
 fi
 
 cp -r "$SRC_DIR" "$TARGET_DIR"
-info "Skill installed to: $TARGET_DIR"
+info "Main skill installed: $TARGET_DIR"
 
+# ---------------------------------------------------------------------------
+# Create /gzjj and /xrtk command aliases
+# ---------------------------------------------------------------------------
+ALIAS_WRAPPER='---
+name: %s
+description: "%s 命令别名，实际执行 ai-handover skill 的工作流程。触发后请按照 ai-handover skill 的 SKILL.md 执行。"
+---
+
+# %s
+
+> 此命令是 **ai-handover** skill 的别名。
+
+请调用 ai-handover skill，执行对应的功能。'
+
+create_alias() {
+    local alias_name="$1"
+    local alias_label="$2"
+    local alias_dir="$TARGET_BASE/$alias_name"
+
+    # Remove old alias if it exists (but not if it's a real skill, not a symlink/wrapper)
+    if [ -L "$alias_dir" ]; then
+        rm -f "$alias_dir"
+        info "Removed old symlink alias: $alias_name"
+    elif [ -d "$alias_dir" ] && [ -f "$alias_dir/SKILL.md" ]; then
+        # Check if it's our wrapper (contains "ai-handover" reference)
+        if grep -q "ai-handover" "$alias_dir/SKILL.md" 2>/dev/null; then
+            rm -rf "$alias_dir"
+            info "Removed old wrapper alias: $alias_name"
+        else
+            warn "$alias_name already exists as a separate skill, skipping alias creation"
+            return
+        fi
+    fi
+
+    # Try symlink first (cleanest approach)
+    if ln -s "$SKILL_NAME" "$alias_dir" 2>/dev/null; then
+        info "Alias created (symlink): /$alias_name -> $SKILL_NAME"
+    else
+        # Fallback: create minimal wrapper SKILL.md
+        mkdir -p "$alias_dir"
+        printf "$ALIAS_WRAPPER" "$alias_name" "$alias_label" "$alias_name" > "$alias_dir/SKILL.md"
+        info "Alias created (wrapper): /$alias_name -> $SKILL_NAME"
+    fi
+}
+
+create_alias "gzjj" "工作交接"
+create_alias "xrtk" "新人填坑"
+
+# ---------------------------------------------------------------------------
+# Verification
+# ---------------------------------------------------------------------------
+echo ""
 if [ -f "$TARGET_DIR/SKILL.md" ]; then
     info "Installation successful!"
     echo ""
     info "Available commands in Claude Code:"
-    echo "  /gzjj        — Generate handover document"
-    echo "  /xrtk        — Take over work (new person onboarding)"
-    echo "  /ai-handover — Show feature menu"
+    echo "  /gzjj        — 工作交接（生成交接文档）"
+    echo "  /xrtk        — 新人填坑（接手工作）"
+    echo "  /ai-handover — 显示功能菜单"
 else
     error "Installation failed: SKILL.md not found in target"
     exit 1
