@@ -23,14 +23,15 @@ cp -r ai-handover/skills/ai-handover ~/.claude/skills/
 npm install @anthropic-ai/claude-code-skill-ai-handover
 ```
 
-### 两个命令
+### 三个命令
 
 | 命令 | 作用 | 场景 |
 |-----|------|-----|
 | `/gzjj` 工作交接 | 生成交接文档 | 对话快满了，需要开新窗口 |
 | `/xrtk` 新人填坑 | 接手工作 | 新对话，继续之前的任务 |
+| `/ai-handover` | 显示功能菜单 | 查看所有选项 |
 
-**名字由来**：拼音首字母缩写
+> `/gzjj` 和 `/xrtk` 是拼音首字母缩写（工-作-交-接、新-人-填-坑），`skill.sh` 安装时会自动创建这两个命令别名。
 
 ### 一分钟上手
 
