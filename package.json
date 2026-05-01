@@ -1,5 +1,5 @@
 {
-  "name": "@anthropic-ai/claude-code-skill-ai-handover",
+  "name": "@noendings/ai-handover",
   "version": "0.1.0",
   "description": "AI 工作交接套装 - 一键生成交接文档，让下一个 AI 无缝接手",
   "keywords": [
@@ -11,7 +11,8 @@
     "context-management",
     "work-transfer",
     "llm-tools",
-    "productivity"
+    "productivity",
+    "chinese"
   ],
   "author": "noendings",
   "license": "MIT",
@@ -24,12 +25,8 @@
   },
   "homepage": "https://github.com/noendings/ai-handover#readme",
   "files": [
-    "skills/ai-handover/SKILL.md",
-    "skill.sh",
-    "README.md"
-  ],
-  "claudeCodeSkill": {
-    "skillPath": "skills/ai-handover",
-    "skillName": "ai-handover"
-  }
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ]
 }
